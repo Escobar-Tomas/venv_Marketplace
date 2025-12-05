@@ -19,6 +19,7 @@ class PerfilUsuario(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
 
     # Campos adicionales de información personal
+    imagen = models.ImageField(upload_to='perfil_imagenes/', blank=True, null=True, verbose_name="Foto de Perfil")
     telefono_contacto = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono de Contacto")
     ubicacion_contacto = models.CharField(max_length=100, blank=True, null=True, verbose_name="Ubicación/Ciudad")
     fecha_registro = models.DateTimeField(auto_now_add=True)
