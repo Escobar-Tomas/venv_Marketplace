@@ -1,0 +1,97 @@
+{% extends "Marketplace_App/base.html" %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="flex items-center justify-center min-h-screen bg-gray-100 login-container">
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8 login-card">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Iniciar Sesión</h2>
+        <form method="post" class="space-y-4 login-form" novalidate>
+            {% csrf_token %}
+            {{ form|safe }}
+            <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Entrar</button>
+        </form>
+        <p class="mt-6 text-center text-gray-600">
+            ¿No tienes una cuenta?
+            <a href="{% url 'registro' %}" class="text-blue-600 hover:underline">Regístrate aquí</a>
+        </p>
+    </div>
+</div>
+
+<style>
+/* Complement Tailwind utilities with scoped CSS to refine form appearance */
+.login-container {
+  background-image: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, rgba(99,102,241,0.02) 100%);
+}
+
+/* Card subtle border to separate from Tailwind shadow */
+.login-card {
+  border: 1px solid rgba(229,231,235,0.9); /* gray-200 */
+}
+
+/* Form controls: style generic inputs, selects and textareas rendered by Django forms */
+.login-form input[type="text"],
+.login-form input[type="email"],
+.login-form input[type="password"],
+.login-form input[type="search"],
+.login-form select,
+.login-form textarea {
+  width: 100%;
+  padding: 0.625rem 0.75rem; /* 10px 12px */
+  border-radius: 0.5rem;     /* match rounded-lg feel */
+  border: 1px solid #e5e7eb; /* gray-200 */
+  background-color: #ffffff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+  font-size: 1rem;
+  color: #111827; /* gray-900 */
+  transition: border-color .15s ease, box-shadow .15s ease, transform .06s ease;
+}
+
+/* Focus state: use the same blue as Tailwind to keep consistent */
+.login-form input:focus,
+.login-form select:focus,
+.login-form textarea:focus {
+  outline: none;
+  border-color: #3b82f6; /* blue-500 */
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.08);
+  transform: translateY(-1px);
+}
+
+/* Labels if present inside the rendered form */
+.login-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: #374151; /* gray-700 */
+  font-size: 0.95rem;
+}
+
+/* Error list styling to blend with card */
+.login-form .errorlist {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: #dc2626; /* red-600 */
+  font-size: 0.875rem;
+}
+
+/* Ensure the submit button remains consistent and has a smooth hover focus */
+.login-form button {
+  transition: transform .06s ease, box-shadow .12s ease;
+}
+.login-form button:active {
+  transform: translateY(1px);
+}
+
+/* Small responsive tweak */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.25rem;
+  }
+}
+</style>
+
+{% endblock %}

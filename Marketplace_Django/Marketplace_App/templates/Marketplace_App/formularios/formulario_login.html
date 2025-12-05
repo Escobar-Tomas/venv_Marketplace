@@ -1,0 +1,37 @@
+{% load static %}
+
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {{ form.as_p|safe }}
+        <div class="submit-row">
+            <button type="submit">Entrar</button>
+        </div>
+    </form>
+</div>
+
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--accent:#0069ff;--muted:#6b7280}
+body{background:linear-gradient(135deg,#eef2ff 0%,var(--bg) 100%);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+.form-card{max-width:420px;margin:48px auto;padding:28px;border-radius:12px;background:var(--card);box-shadow:0 8px 30px rgba(2,6,23,0.08);border:1px solid rgba(16,24,40,0.04)}
+.form-card h2{margin:0 0 12px;font-size:1.25rem;color:#0f172a}
+.form-card p{margin:0 0 18px;color:var(--muted);font-size:.95rem}
+.form-card form p{display:flex;flex-direction:column;gap:6px;margin:0 0 12px}
+.form-card form label{font-size:.85rem;color:var(--muted)}
+.form-card form input, .form-card form select, .form-card form textarea{
+    padding:10px 12px;border-radius:8px;border:1px solid #e6e9ef;background:#fff;outline:none;transition:box-shadow .15s, border-color .15s
+}
+.form-card form input:focus, .form-card form select:focus, .form-card form textarea:focus{
+    border-color:var(--accent);box-shadow:0 4px 18px rgba(3,102,255,0.12)
+}
+.form-card .submit-row{display:flex;justify-content:flex-end;margin-top:8px}
+.form-card button[type="submit"]{
+    background:var(--accent);color:#fff;border:none;padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer;transition:transform .08s,box-shadow .08s
+}
+.form-card button[type="submit"]:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(3,102,255,0.12)}
+.form-errors{color:#b91c1c;font-size:.9rem;margin-bottom:8px}
+@media (max-width:480px){.form-card{margin:24px;padding:18px}}
+</style>

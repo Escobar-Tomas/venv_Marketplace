@@ -1,0 +1,69 @@
+{% extends 'Marketplace_App/templates/base.html' %}
+
+{% block title %}Contacto{% endblock %}
+
+{% block content %}
+
+  <div class="contact-container max-w-3xl mx-auto p-6 mt-12">
+    <h1 class="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Contacto</h1>
+
+    <form method="post" class="contact-form">
+      {% csrf_token %}
+
+      {% if formulario_contacto.errors %}
+        <p class="error-message">Por favor corrige los errores en el formulario.</p>
+      {% endif %}
+
+      {{ formulario_contacto.as_p }}
+
+      <button type="submit" class="submit-btn">Enviar</button>
+    </form>
+
+<style>
+      .contact-form {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      }
+      .contact-form p { margin: 0 0 12px; }
+      .contact-form input,
+      .contact-form textarea,
+      .contact-form select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 1rem;
+        color: #111827;
+      }
+      .contact-form textarea { min-height: 120px; resize: vertical; }
+      .contact-form input:focus,
+      .contact-form textarea:focus,
+      .contact-form select:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+        border-color: #6366f1;
+      }
+      .contact-form .error-message {
+        color: #dc2626;
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+      .contact-form .submit-btn {
+        display: inline-block;
+        padding: 10px 16px;
+        background: #6366f1;
+        color: #ffffff;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .contact-form .submit-btn:hover { background: #4f46e5; }
+    </style>
+
+  </div>
+
+{% endblock %}

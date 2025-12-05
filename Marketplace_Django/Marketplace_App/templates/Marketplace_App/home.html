@@ -1,0 +1,44 @@
+{% extends 'Marketplace_App/base.html' %}
+
+{% block title %}Productos Disponibles{% endblock %}
+
+{% block content %}
+<div class="mb-8 text-center">
+    <h1 class="text-4xl font-bold text-gray-800">Explora Nuestro Sitio de Anuncios</h1>
+    <p class="text-gray-600 mt-2">Encuentra ofertas increíbles cerca de ti.</p>
+</div>
+
+<!-- Contenedor de la cuadrícula de productos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    
+    {% for producto in productos %}
+    <!-- Tarjeta de Producto -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300">
+        <a href="#">
+            <!-- Imagen del Producto (usando un placeholder) -->
+            {% if producto.image %}
+                 <img src="{{ producto.image.url }}" alt="{{ producto.title }}" class="w-full h-48 object-cover">
+            {% else %}
+                 <img src="https://placehold.co/600x400/E2E8F0/4A5568?text=Producto" alt="{{ producto.title }}" class="w-full h-48 object-cover">
+            {% endif %}
+
+            <div class="p-4">
+                <!-- Precio del Producto -->
+                <p class="text-xl font-bold text-gray-900">${{ producto.price|floatformat:2 }}</p>
+                
+                <!-- Título del Producto -->
+                <h2 class="mt-2 text-lg font-semibold text-gray-800 truncate">{{ producto.title }}</h2>
+                
+                <!-- Descripción Corta -->
+                <p class="mt-1 text-gray-600 text-sm truncate">{{ producto.description|default:"Sin descripción" }}</p>
+                
+                <!-- Vendedor -->
+                <p class="mt-3 text-xs text-gray-500">Vendido por: <span class="font-medium">{{ producto.created_by.username }}</span></p>
+            </div>
+        </a>
+    </div>
+    {% empty %}
+        <p class="col-span-full text-center text-gray-500">No hay productos disponibles en este momento.</p>
+    {% endfor %}
+</div>
+{% endblock %}
