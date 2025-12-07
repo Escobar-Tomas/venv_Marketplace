@@ -10,38 +10,48 @@ from django.contrib.auth.decorators import login_required # ¡Fundamental!
 # Create your views here.
 # Marketplace_App/views.py
 
+# 1. Agrega esta importación al principio del archivo
+from django.db.models import Q 
+
+# ... (otras importaciones) ...
+
 def home(request, categoria_slug=None):
-    # 1. Obtener todas las categorías para el menú
+    # ... (código existente para categorías y productos base) ...
     categorias = Categoria.objects.all()
-    
-    # 2. Obtener anuncios base (activos y ordenados)
     productos = Anuncio.objects.filter(activo=True).order_by('-fecha_publicacion')
     
-    # --- NUEVO: Obtener ubicaciones únicas de los anuncios activos ---
-    # values_list('ubicacion', flat=True) devuelve una lista de strings ['Yerba Buena', 'Capital', ...]
-    # distinct() elimina duplicados.
+    # ... (código existente de ubicaciones) ...
     ubicaciones = Anuncio.objects.filter(activo=True).values_list('ubicacion', flat=True).distinct().order_by('ubicacion')
     
     categoria_actual = None
     
-    # 3. Filtrado por Categoría (URL)
+    # 1. Filtro de Categoría (Existente)
     if categoria_slug:
         categoria_actual = get_object_or_404(Categoria, slug=categoria_slug)
         productos = productos.filter(categoria=categoria_actual)
 
-    # --- NUEVO: Filtrado por Ubicación (Parámetro GET) ---
-    # Captura ?ubicacion=Yerba+Buena de la URL
+    # 2. Filtro de Ubicación (Existente)
     ubicacion_actual = request.GET.get('ubicacion')
-    
     if ubicacion_actual:
         productos = productos.filter(ubicacion=ubicacion_actual)
+        
+    # --- NUEVO: Lógica del Buscador ---
+    busqueda = request.GET.get('q') # 'q' es el nombre estándar para queries de búsqueda
     
+    if busqueda:
+        # Usamos Q para decir: (titulo CONTIENE busqueda) O (descripcion CONTIENE busqueda)
+        productos = productos.filter(
+            Q(titulo__icontains=busqueda) | 
+            Q(descripcion__icontains=busqueda)
+        )
+
     context = {
         'productos': productos,
         'categorias': categorias,
         'categoria_actual': categoria_actual,
-        'ubicaciones': ubicaciones,       # Enviamos la lista al template
-        'ubicacion_actual': ubicacion_actual # Para saber cuál marcar como activa
+        'ubicaciones': ubicaciones,
+        'ubicacion_actual': ubicacion_actual,
+        'busqueda': busqueda, # Pasamos esto para mantener el texto en la cajita
     }
     return render(request, 'Marketplace_App/home.html', context)
 
@@ -129,6 +139,25 @@ def editar_anuncio(request, pk):
         else:
             messages.error(request, 'Error al actualizar el anuncio.')
             
+    return redirect('mi_perfil')
+
+# Marketplace_App/views.py
+
+@login_required
+def eliminar_anuncio(request, pk):
+    # Obtenemos el anuncio asegurándonos que pertenezca al usuario actual
+    anuncio = get_object_or_404(Anuncio, pk=pk)
+    
+    if anuncio.usuario != request.user:
+        messages.error(request, "No tienes permiso para eliminar este anuncio.")
+        return redirect('mi_perfil')
+    
+    if request.method == 'POST':
+        anuncio.delete()
+        messages.success(request, "El anuncio ha sido eliminado correctamente.")
+        return redirect('mi_perfil')
+        
+    # Si intentan acceder por GET, los devolvemos al perfil
     return redirect('mi_perfil')
 
 @login_required

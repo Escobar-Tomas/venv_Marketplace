@@ -24,4 +24,6 @@ urlpatterns = [
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     # NUEVA RUTA para editar anuncio específico
     path('anuncio/editar/<int:pk>/', views.editar_anuncio, name='editar_anuncio'),
+    
+    path('anuncio/eliminar/<int:pk>/', views.eliminar_anuncio, name='eliminar_anuncio'),
 ]
