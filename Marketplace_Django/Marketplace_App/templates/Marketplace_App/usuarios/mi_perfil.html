@@ -1,0 +1,443 @@
+{% extends 'Marketplace_App/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-8 relative">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <div class="md:col-span-1">
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-600 sticky z-30 h-fit"
+                style="top: 110px;">
+                <div class="text-center mb-6">
+                    <div
+                        class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl overflow-hidden border-4 border-white shadow-sm">
+
+                        {% if user.perfil.imagen %}
+                        <img src="{{ user.perfil.imagen.url }}" alt="Foto perfil" class="w-full h-full object-cover">
+                        {% else %}
+                        <span class="text-4xl">👤</span>
+                        {% endif %}
+
+                    </div>
+
+                    <h1 class="text-2xl font-bold text-gray-800">{{ user.username }}</h1>
+                    <p class="text-gray-500">{{ user.email }}</p>
+                </div>
+
+                <div class="space-y-3 text-sm border-t pt-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Teléfono:</span>
+                        <span class="text-gray-900">{{ perfil.telefono_contacto|default:"No especificado" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Ubicación:</span>
+                        <span class="text-gray-900">{{ perfil.ubicacion_contacto|default:"No especificada" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Miembro desde:</span>
+                        <span class="text-gray-900">{{ perfil.fecha_registro|date:"d M Y" }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="toggleModal('modal-perfil')"
+                        class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded transition duration-200">
+                        ✏️ Editar mis datos
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:col-span-2 space-y-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Mis Anuncios Publicados</h2>
+                <a href="{% url 'crear_anuncio' %}"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded transition">
+                    + Nuevo Anuncio
+                </a>
+            </div>
+
+            {% if anuncios_con_forms %}
+            <div class="space-y-4">
+                {% for anuncio, form_anuncio in anuncios_con_forms %}
+                <div
+                    class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+
+                    <div class="w-full sm:w-24 h-24 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+                        {% if anuncio.imagen_principal %}
+                        <img src="{{ anuncio.imagen_principal.url }}" alt="{{ anuncio.titulo }}"
+                            class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">Sin foto</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-lg text-gray-800">
+                            <a href="{% url 'detalle_anuncio' anuncio.pk %}"
+                                class="hover:text-blue-600 hover:underline">
+                                {{ anuncio.titulo }}
+                            </a>
+                        </h3>
+                        <p class="text-blue-600 font-bold">${{ anuncio.precio|floatformat:2 }}</p>
+                        <p class="text-xs text-gray-500 mt-1">
+                            {{ anuncio.categoria.nombre }} | {{ anuncio.get_estado_display }}
+                        </p>
+                    </div>
+
+                    <div class="mt-2 sm:mt-0 flex gap-2">
+                        <button onclick="toggleModal('modal-anuncio-{{ anuncio.id }}')"
+                            class="text-sm bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1 rounded hover:bg-yellow-100 transition">
+                            Editar
+                        </button>
+
+                        <button onclick="toggleModal('modal-eliminar-{{ anuncio.id }}')"
+                            class="text-sm bg-red-50 text-red-700 border border-red-200 px-3 py-1 rounded hover:bg-red-100 transition">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="modal-anuncio-{{ anuncio.id }}" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title"
+                    role="dialog" aria-modal="true">
+
+                    <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity"
+                        onclick="toggleModal('modal-anuncio-{{ anuncio.id }}')"></div>
+
+                    <div class="fixed inset-0 z-10 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+
+                        <div
+                            class="pointer-events-auto relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+
+                            <div
+                                class="flex-shrink-0 bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                        </path>
+                                    </svg>
+                                    Editar: {{ anuncio.titulo|truncatechars:20 }}
+                                </h3>
+                                <button onclick="toggleModal('modal-anuncio-{{ anuncio.id }}')"
+                                    class="text-yellow-100 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form action="{% url 'editar_anuncio' pk=anuncio.id %}" method="POST"
+                                enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden">
+                                {% csrf_token %}
+
+                                <div class="flex-1 overflow-y-auto p-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                        <div class="flex flex-col items-center space-y-3">
+                                            <div class="relative group cursor-pointer w-full"
+                                                onclick="document.getElementById('input-img-{{ anuncio.id }}').click()">
+
+                                                <div
+                                                    class="w-full h-48 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 group-hover:border-orange-400 transition-colors flex items-center justify-center relative">
+
+                                                    <img id="preview-img-{{ anuncio.id }}"
+                                                        src="{% if anuncio.imagen_principal %}{{ anuncio.imagen_principal.url }}{% endif %}"
+                                                        class="w-full h-full object-cover absolute inset-0 {% if not anuncio.imagen_principal %}hidden{% endif %}">
+
+                                                    <div id="placeholder-img-{{ anuncio.id }}"
+                                                        class="text-gray-400 flex flex-col items-center {% if anuncio.imagen_principal %}hidden{% endif %}">
+                                                        <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                            </path>
+                                                        </svg>
+                                                        <span class="text-sm">Subir Foto</span>
+                                                    </div>
+
+                                                    <div
+                                                        class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                                        <span class="text-white font-bold tracking-wide">📷
+                                                            Cambiar</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <input type="file" name="imagen_principal" id="input-img-{{ anuncio.id }}"
+                                                class="hidden" onchange="previewAdImage(event, '{{ anuncio.id }}')">
+                                        </div>
+
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-500 uppercase mb-1">Título</label>
+                                                <input type="text" name="titulo" value="{{ form_anuncio.titulo.value }}"
+                                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-orange-500 focus:border-orange-500">
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-gray-500 uppercase mb-1">Precio</label>
+                                                    <input type="number" name="precio"
+                                                        value="{{ form_anuncio.precio.value|stringformat:'s' }}"
+                                                        class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-orange-500 focus:border-orange-500">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-gray-500 uppercase mb-1">Estado</label>
+                                                    {{ form_anuncio.estado }}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-xs font-bold text-gray-500 uppercase mb-1">Categoría</label>
+                                                {{ form_anuncio.categoria }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 space-y-4">
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold text-gray-500 uppercase mb-1">Descripción</label>
+                                            <textarea name="descripcion" rows="3"
+                                                class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-orange-500 focus:border-orange-500">{{ form_anuncio.descripcion.value }}</textarea>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-xs font-bold text-gray-500 uppercase mb-1">Ubicación</label>
+                                            <input type="text" name="ubicacion"
+                                                value="{{ form_anuncio.ubicacion.value }}"
+                                                class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-orange-500 focus:border-orange-500">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+                                    <button type="button" onclick="toggleModal('modal-anuncio-{{ anuncio.id }}')"
+                                        class="flex-1 bg-white text-gray-700 border border-gray-300 font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-50 transition">
+                                        Cancelar
+                                    </button>
+                                    <button type="submit"
+                                        class="flex-1 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg hover:shadow-lg transition">
+                                        Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="modal-eliminar-{{ anuncio.id }}" class="fixed inset-0 z-50 hidden overflow-y-auto"
+                    aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                            onclick="toggleModal('modal-eliminar-{{ anuncio.id }}')"></div>
+
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                            aria-hidden="true">&#8203;</span>
+
+                        <div
+                            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div class="sm:flex sm:items-start">
+                                    <div
+                                        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
+                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                            Eliminar Anuncio
+                                        </h3>
+                                        <div class="mt-2">
+                                            <p class="text-sm text-gray-500">
+                                                ¿Estás seguro de que deseas eliminar <strong>"{{ anuncio.titulo }}"</strong>? <br>
+                                                Esta acción no se puede deshacer.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <form action="{% url 'eliminar_anuncio' pk=anuncio.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                        Sí, eliminar
+                                    </button>
+                                </form>
+                                <button type="button" onclick="toggleModal('modal-eliminar-{{ anuncio.id }}')"
+                                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">Aún no tienes anuncios.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div id="modal-perfil" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+
+    <div class="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity"
+        onclick="toggleModal('modal-perfil')"></div>
+
+    <div class="fixed inset-0 z-10 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+
+        <div
+            class="pointer-events-auto relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+
+            <div
+                class="flex-shrink-0 bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Editar Perfil
+                </h3>
+                <button onclick="toggleModal('modal-perfil')" class="text-blue-100 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <form action="{% url 'editar_perfil' %}" method="POST" enctype="multipart/form-data"
+                class="flex flex-col flex-1 overflow-hidden">
+                {% csrf_token %}
+
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                        <div class="relative group cursor-pointer"
+                            onclick="document.getElementById('id_imagen').click()">
+
+                            <div
+                                class="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-100 shadow-md group-hover:border-blue-300 transition-colors bg-gray-100 flex items-center justify-center">
+
+                                <img id="preview-avatar"
+                                    src="{% if user.perfil.imagen %}{{ user.perfil.imagen.url }}{% endif %}"
+                                    class="w-full h-full object-cover {% if not user.perfil.imagen %}hidden{% endif %}">
+
+                                <div id="preview-placeholder"
+                                    class="text-4xl text-gray-400 {% if user.perfil.imagen %}hidden{% endif %}">
+                                    👤
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <span class="text-white font-semibold text-sm">📷 Cambiar</span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-gray-500">Toca la imagen para cambiarla</p>
+
+                        <input type="file" name="imagen" accept="image/*" id="id_imagen" class="hidden"
+                            onchange="previewImage(event)">
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono / WhatsApp</label>
+                            <input type="text" name="telefono_contacto"
+                                value="{{ form_perfil.telefono_contacto.value|default:'' }}"
+                                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                                placeholder="Ej: 381-1234567">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Ubicación / Ciudad</label>
+                            <input type="text" name="ubicacion_contacto"
+                                value="{{ form_perfil.ubicacion_contacto.value|default:'' }}"
+                                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                                placeholder="Ej: Yerba Buena">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-shrink-0 px-6 py-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+                    <button type="button" onclick="toggleModal('modal-perfil')"
+                        class="flex-1 bg-white text-gray-700 border border-gray-300 font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 bg-blue-600 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-blue-700 transition shadow-md">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Actualiza tu función toggleModal con esta lógica de bloqueo de scroll
+    function toggleModal(modalID) {
+        const modal = document.getElementById(modalID);
+        const body = document.body;
+
+        if (modal.classList.contains('hidden')) {
+            // ABRIR
+            modal.classList.remove('hidden');
+            // Bloqueamos el scroll del body
+            body.style.overflow = 'hidden';
+        } else {
+            // CERRAR
+            modal.classList.add('hidden');
+            // Restauramos el scroll del body
+            body.style.overflow = '';
+        }
+    }
+
+    // ... (resto de tus scripts de previewImage, etc) ...
+
+    // Estilizar los inputs que vienen de Django Forms automáticamente
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="number"], select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'border', 'border-gray-300', 'rounded-md', 'px-3', 'py-2', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
+        });
+    });
+
+    function previewAdImage(event, anuncioId) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('preview-img-' + anuncioId);
+            const placeholder = document.getElementById('placeholder-img-' + anuncioId);
+            
+            if (output) {
+                output.src = reader.result;
+                output.classList.remove('hidden'); // Mostrar la nueva imagen
+            }
+            if (placeholder) {
+                placeholder.classList.add('hidden'); // Ocultar el icono de "subir foto"
+            }
+        };
+        
+        if (event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+
+</script>
+
+{% endblock %}

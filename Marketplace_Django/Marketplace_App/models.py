@@ -27,6 +27,8 @@ class PerfilUsuario(models.Model):
     # Campo 'verificado' del DER original, movido aquí
     verificado = models.BooleanField(default=False) 
     
+    telefono_verificado = models.BooleanField(default=False)
+    
     # Campo 'rol' (Si se necesitan roles complejos, se usaría un modelo de Grupos de Django. 
     # Aquí se maneja como un campo simple para propósitos del DER)
     ROL_CHOICES = [

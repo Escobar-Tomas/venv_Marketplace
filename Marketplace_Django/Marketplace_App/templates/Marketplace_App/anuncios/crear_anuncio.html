@@ -1,0 +1,201 @@
+{% extends 'Marketplace_App/base.html' %}
+{% load static %}
+
+{% block title %}Publicar Nuevo Anuncio{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-6">
+            <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+                <svg class="w-8 h-8 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Publicar un Nuevo Anuncio
+            </h1>
+            <p class="text-blue-100 mt-2 text-sm">Completa los detalles de tu producto para que los compradores lo encuentren fácilmente.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="p-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm leading-5 font-medium text-red-800">Hubo errores en el envío</h3>
+                            <div class="mt-2 text-sm leading-5 text-red-700">
+                                {{ form.non_field_errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                
+                <div class="lg:col-span-1 space-y-4">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Foto Principal</label>
+                    
+                    <div class="relative group cursor-pointer w-full aspect-square" onclick="document.getElementById('id_imagen_principal').click()">
+                        <div class="w-full h-full bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 group-hover:border-blue-500 group-hover:bg-blue-50 transition-all duration-200 flex flex-col items-center justify-center relative overflow-hidden">
+                            
+                            <div id="upload-placeholder" class="text-center p-6 transition-opacity duration-200">
+                                <div class="bg-white p-4 rounded-full shadow-sm mb-3 inline-block">
+                                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-900">Sube una foto</p>
+                                <p class="text-xs text-gray-500 mt-1">PNG, JPG hasta 5MB</p>
+                            </div>
+                            
+                            <img id="preview-image" class="hidden w-full h-full object-cover absolute inset-0 z-10">
+                            
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 z-20 flex items-center justify-center">
+                                <span class="bg-white text-gray-800 text-xs font-bold py-2 px-4 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200">
+                                    Cambiar imagen
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{ form.imagen_principal }} {% if form.imagen_principal.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.imagen_principal.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <div>
+                        <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Título del Anuncio</label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.titulo.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.precio.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Precio</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 font-bold">$</span>
+                                </div>
+                                {{ form.precio }}
+                            </div>
+                            {% if form.precio.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.precio.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.estado.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Condición</label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ form.estado.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.categoria.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Categoría</label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.categoria.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Descripción Detallada</label>
+                        {{ form.descripcion }}
+                        <p class="text-xs text-gray-500 mt-1 text-right">Cuenta los detalles importantes de tu producto.</p>
+                        {% if form.descripcion.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.descripcion.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.ubicacion.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1">Ubicación</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            {{ form.ubicacion }}
+                        </div>
+                        {% if form.ubicacion.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.ubicacion.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="mt-10 border-t border-gray-100 pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3">
+                <a href="{% url 'home' %}" class="w-full sm:w-auto px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors text-center">
+                    Cancelar
+                </a>
+                <button type="submit" class="w-full sm:w-auto px-8 py-3 border border-transparent text-sm font-bold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                    Publicar Anuncio
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Ocultar el input file original feo */
+    input[type="file"]#id_imagen_principal {
+        display: none;
+    }
+
+    /* Estilos base para inputs de texto, selects y textareas */
+    #id_titulo, #id_precio, #id_ubicacion, #id_estado, #id_categoria, #id_descripcion {
+        width: 100%;
+        border-radius: 0.5rem; /* rounded-lg */
+        border: 1px solid #d1d5db; /* border-gray-300 */
+        padding: 0.625rem 1rem; /* p-2.5 */
+        font-size: 0.875rem; /* text-sm */
+        transition: all 0.2s;
+        background-color: #f9fafb; /* bg-gray-50 */
+    }
+
+    #id_titulo:focus, #id_precio:focus, #id_ubicacion:focus, #id_estado:focus, #id_categoria:focus, #id_descripcion:focus {
+        outline: none;
+        border-color: #3b82f6; /* blue-500 */
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* ring-blue-500/20 */
+        background-color: #ffffff;
+    }
+
+    /* Ajuste específico para inputs con iconos (padding izquierda) */
+    #id_precio { padding-left: 1.5rem; }
+    #id_ubicacion { padding-left: 2.5rem; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Conectar el input file de Django con nuestra lógica
+        const fileInput = document.getElementById('id_imagen_principal');
+        const previewImage = document.getElementById('preview-image');
+        const placeholder = document.getElementById('upload-placeholder');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.classList.remove('hidden');
+                        placeholder.classList.add('hidden');
+                        placeholder.classList.add('opacity-0'); // Animación suave
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

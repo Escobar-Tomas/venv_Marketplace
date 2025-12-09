@@ -1,0 +1,31 @@
+{% extends 'Marketplace_App/base.html' %}
+
+{% block title %}Ingresar Código{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center">
+        
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Ingresa el Código</h2>
+        <p class="text-gray-600 mb-6 text-sm">
+            Revisa tu teléfono (o la consola del servidor) e ingresa el código de 6 dígitos.
+        </p>
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            
+            <input type="text" name="codigo" 
+                   class="w-full text-center text-3xl font-bold tracking-widest rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 py-4"
+                   placeholder="000000" maxlength="6" required>
+
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition shadow-md">
+                Validar y Publicar
+            </button>
+        </form>
+        
+        <a href="{% url 'verificar_telefono' %}" class="block mt-4 text-sm text-gray-500 hover:text-gray-700">
+            ¿Número equivocado? Volver atrás
+        </a>
+    </div>
+</div>
+{% endblock %}

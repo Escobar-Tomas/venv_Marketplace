@@ -11,10 +11,6 @@ class RegisterForm(forms.Form):
     email = forms.EmailField(label='Correo Electrónico')
     password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repetir Contraseña', widget=forms.PasswordInput)
-    
-class LoginForm(forms.Form):
-    username = forms.CharField(label='Nombre de Usuario', max_length=100)
-    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
 
 # --- NUEVO FORMULARIO: AnuncioForm ---
 class AnuncioForm(forms.ModelForm):

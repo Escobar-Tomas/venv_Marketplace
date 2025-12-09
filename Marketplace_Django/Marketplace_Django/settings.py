@@ -48,6 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # NUESTRO MIDDLEWARE DE SEGURIDAD
+    #'Marketplace_App.middleware.VerificacionDosPasosMiddleware',
 ]
 
 ROOT_URLCONF = 'Marketplace_Django.urls'
@@ -137,3 +140,17 @@ MEDIA_URL = '/media/'
 
 # Ruta en el sistema de archivos donde se guardarán
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+from dotenv import load_dotenv # Importar librería
+
+# Cargar las variables del archivo .env
+load_dotenv()
+
+# CONFIGURACIÓN DE EMAIL (GMAIL SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# Leemos los valores del archivo .env
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')

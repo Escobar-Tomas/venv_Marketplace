@@ -40,7 +40,7 @@
                 {% if user.is_authenticated %}
 
                 <a href="{% url 'crear_anuncio' %}"
-                    class="text-gray-600 hover:text-blue-600 font-medium mr-4">Vender</a>
+                    class="text-gray-600 hover:text-blue-600 font-medium mr-4">Publicar</a>
 
                 <div class="relative ml-3">
                     <div>
@@ -78,7 +78,7 @@
                 </div>
 
                 {% else %}
-                <a href="{% url 'registro' %}" class="text-gray-600 hover:text-blue-600 hidden sm:inline">Vender</a>
+                <a href="{% url 'registro' %}" class="text-gray-600 hover:text-blue-600 hidden sm:inline">Publicar</a>
                 <a href="{% url 'registro' %}"
                     class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 ml-2 text-sm">Registrarse</a>
                 <a href="{% url 'login' %}"
